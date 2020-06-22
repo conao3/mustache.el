@@ -17,7 +17,8 @@
 (require 's)
 (require 'dash)
 
-(eval-when-compile '(require 'cl)) ;; return, dolist
+;; (eval-when-compile '(require 'cl)) ;; return, dolist
+(require 'cl-lib)
 
 (load "mustache-lex.el")
 (load "mustache-parse.el")
@@ -51,7 +52,7 @@ Partials are searched for in `mustache-partial-paths'."
            (matching-partial (--first
                               (string-match-p (regexp-quote partial-name) it)
                               partials)))
-        (return
+        (cl-return
          (with-temp-buffer
            (insert-file-contents-literally (expand-file-name matching-partial path))
            (buffer-substring-no-properties (point-min) (point-max))))))))
@@ -112,7 +113,7 @@ E.g. from {{#foo}} to \"foo\"."
 render it in CONTEXT."
   (cond ((mst--section-p parsed-lexeme)
          ;; nested section
-         (let* ((section-tag (first parsed-lexeme))
+         (let* ((section-tag (cl-first parsed-lexeme))
                 (section-name (mst--section-name section-tag))
                 (context-value (mst--context-get context section-name))
                 ;; strip section open and close
@@ -143,7 +144,7 @@ render it in CONTEXT."
          (mst--render-tag parsed-lexeme context))
         ;; plain text
         (t
-         (second parsed-lexeme))))
+         (cl-second parsed-lexeme))))
 
 (defun mst--escape-html (string)
   "Escape HTML in STRING."

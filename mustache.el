@@ -5,7 +5,7 @@
 ;; Author: Wilfred Hughes <me@wilfred.me.uk>
 ;; Version: 0.24
 ;; Keywords: mustache, template
-;; Package-Requires: ((ht "0.9") (s "1.3.0") (dash "1.2.0"))
+;; Package-Requires: ((cl-lib "0.5") (ht "0.9") (s "1.3.0") (dash "1.2.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

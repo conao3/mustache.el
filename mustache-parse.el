@@ -14,7 +14,8 @@
 ;; along with mustache.el.  If not, see <https://www.gnu.org/licenses/>.
 
 (require 's)
-(eval-when-compile (require 'cl)) ;; loop, return
+;; (eval-when-compile (require 'cl)) ;; loop, return
+(require 'cl-lib)
 
 (defvar mst--remaining-lexemes nil
   "Since `mst--parse-inner' recursively calls itself, we need a shared value to mutate.")
@@ -28,7 +29,7 @@
   "Parse `mst--remaining-lexemes', and return a list of lexemes nested according to #tags or ^tags."
   (let (parsed-lexemes
         lexeme)
-    (loop while mst--remaining-lexemes do
+    (cl-loop while mst--remaining-lexemes do
           (setq lexeme (pop mst--remaining-lexemes))
           (cond
            ((mst--open-section-p lexeme)
@@ -39,7 +40,7 @@
             (unless (equal section-name (mst--section-name lexeme))
               (error "Mismatched brackets: You closed a section with %s, but it wasn't open" section-name))
             (push lexeme parsed-lexemes)
-            (return))
+            (cl-return))
            (t
             ;; this is just a tag in the current section
             (push lexeme parsed-lexemes))))
@@ -52,7 +53,7 @@
 
 (defun mst--open-section-p (lexeme)
   "Is LEXEME a #tag or ^tag ?"
-  (destructuring-bind (type value) lexeme
+  (cl-destructuring-bind (type value) lexeme
     (and (equal type :tag)
          (or
           (s-starts-with-p "#" value)
@@ -60,7 +61,7 @@
 
 (defun mst--close-section-p (lexeme)
   "Is LEXEME a /tag ?"
-  (destructuring-bind (type value) lexeme
+  (cl-destructuring-bind (type value) lexeme
     (and (equal type :tag)
          (s-starts-with-p "/" value))))
 
