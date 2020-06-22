@@ -45,17 +45,18 @@
 Partials are searched for in `mustache-partial-paths'."
   (unless (listp mustache-partial-paths)
     (error "`mustache-partial-paths' must be a list of paths"))
-  (let ((partial-name (format "%s.mustache" name)))
-    (dolist (path mustache-partial-paths)
-      (-when-let*
-          ((partials (directory-files path nil "\\.mustache$"))
-           (matching-partial (--first
-                              (string-match-p (regexp-quote partial-name) it)
-                              partials)))
-        (cl-return
-         (with-temp-buffer
-           (insert-file-contents-literally (expand-file-name matching-partial path))
-           (buffer-substring-no-properties (point-min) (point-max))))))))
+  (cl-block nil
+    (let ((partial-name (format "%s.mustache" name)))
+     (dolist (path mustache-partial-paths)
+       (-when-let*
+           ((partials (directory-files path nil "\\.mustache$"))
+            (matching-partial (--first
+                               (string-match-p (regexp-quote partial-name) it)
+                               partials)))
+         (cl-return
+          (with-temp-buffer
+            (insert-file-contents-literally (expand-file-name matching-partial path))
+            (buffer-substring-no-properties (point-min) (point-max)))))))))
 
 (defun mst--render-section-list (sections context)
   "Render a parsed list SECTIONS in CONTEXT."
